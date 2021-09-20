@@ -17,7 +17,9 @@ class LoadConfigTest {
     void readPins() throws IOException {
         final File configData = new ClassPathResource("config/load-config.json").getFile();
         final DocumentContext parse = JsonPath.parse(configData);
-        List<String> read = parse.read("$..pin");
-        assertThat(read.size()).isGreaterThan(0);
+
+        List<String> read = parse.read("$.[?(@['disCode'] == 'A')].pin");
+        assertThat(read.size()).isEqualTo(5808);
+
     }
 }

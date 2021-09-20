@@ -72,7 +72,7 @@ public class FileTransferApplication {
         try {
             final File configData = new ClassPathResource("config/load-config.json").getFile();
             final DocumentContext parse = JsonPath.parse(configData);
-            return parse.read("$..pin");
+            return parse.read("$.[?(@['disCode'] == 'A')].pin");
         } catch (IOException e) {
             throw new RuntimeException("Error loading config json.");
         }
