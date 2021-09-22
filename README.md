@@ -1,7 +1,22 @@
 # Spring Integration Flow
 
 Download files from URL and upload to S3.
-Programe iterates over json elements of `resources/config/load-config.json` extracting pin to construct the url of the file to be downloaded.
+Program iterates over json elements of `resources/config/load-config.json` extracting pin to construct the url of the file to be downloaded.
+
+Trigger execution of the flow using:
+
+```bash
+curl --location --request GET 'http://localhost:8080/flow'
+```
+
+Counter for uploaded documents is expose via [prometheus actuator endpoint](http://localhost:8080/actuator/prometheus).
+Search for following lines on the actuator status page:
+
+```
+# HELP uploaded_tm_total The number of PDF files uploaded to S3.
+# TYPE uploaded_tm_total counter
+uploaded_tm_total{type="pdf",} 0.0
+```
 
 ## Local Development
 

@@ -16,6 +16,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-integration'
 	implementation 'org.springframework.integration:spring-integration-http'
 	implementation 'org.springframework.integration:spring-integration-file'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	implementation 'io.micrometer:micrometer-core'
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
 	implementation 'org.springframework.integration:spring-integration-aws:2.5.1'
 	implementation 'com.jayway.jsonpath:json-path:2.6.0'
 	implementation 'javax.xml.bind:jaxb-api:2.3.0'
