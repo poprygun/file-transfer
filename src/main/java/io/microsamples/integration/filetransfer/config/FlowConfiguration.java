@@ -7,6 +7,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -17,25 +18,32 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.integration.aws.outbound.S3MessageHandler;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.http.dsl.Http;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
 @Configuration
+@Slf4j
 public class FlowConfiguration {
 
-
     private static final String TM_URL = "https://liw.logsa.army.mil/etmapp/api/general/search/{file}/0/pdf";
+
+//    @Autowired
+//    @Qualifier("errorChannel")
+//    private PublishSubscribeChannel errorChannel;
 
     @Bean
     @Primary
@@ -64,7 +72,19 @@ public class FlowConfiguration {
                 .build();
         HttpComponentsClientHttpRequestFactory customRequestFactory = new HttpComponentsClientHttpRequestFactory();
         customRequestFactory.setHttpClient(httpClient);
-        return builder.requestFactory(() -> customRequestFactory).build();
+        return builder
+                .errorHandler(new ResponseErrorHandler() {
+                    @Override
+                    public boolean hasError(ClientHttpResponse response) throws IOException {
+                        return !response.getStatusCode().is2xxSuccessful();
+                    }
+
+                    @Override
+                    public void handleError(ClientHttpResponse response) throws IOException {
+                        log.info("👀 Error processing pin ----------> {}, {}", response.getStatusCode().value(), response.getStatusText());
+                    }
+                })
+                .requestFactory(() -> customRequestFactory).build();
     }
 
     @Bean
@@ -79,7 +99,6 @@ public class FlowConfiguration {
                         h -> h.headerExpression("fileName", "payload")
                 ).handle(
                         Http.outboundGateway(TM_URL, restTemplate)
-
                                 .httpMethod(HttpMethod.GET)
                                 .uriVariable("file", "payload")
                                 .expectedResponseType(byte[].class)

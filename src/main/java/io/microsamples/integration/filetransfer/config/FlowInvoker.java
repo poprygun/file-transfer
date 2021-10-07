@@ -4,6 +4,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 public class FlowInvoker {
     private FlowInvokerConfiguration.FileNamesSender sender;
     private MeterRegistry meterRegistry;
@@ -32,16 +34,11 @@ public class FlowInvoker {
 
         fileNames.forEach(
                 fileName -> {
-                    try {
-                        System.out.println("👀 processing " + fileName);
-                        counter.increment(-counter.count()); //reset the counter
-                        Thread.sleep(1000);
-                        sender.send(fileName);
-                        System.out.println("👀 uploaded " + fileName);
-                        counter.increment();
-                    } catch (Throwable e) {
-                        System.out.println(e.getMessage());
-                    }
+                    log.info("👀 processing {}", fileName);
+                    counter.increment(-counter.count()); //reset the counter
+                    sender.send(fileName);
+                    log.info("👀 uploaded ", fileName );
+                    counter.increment();
                 }
         );
     }

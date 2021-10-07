@@ -12,6 +12,17 @@
   },
   {
     "format": "PDF",
+    "pin": "0184874558",
+    "zip": "0",
+    "number": "TM 9-3419-225-10",
+    "pubDate": "May 24, 1965",
+    "changeDate": "May 17, 1973",
+    "currentChange": "1",
+    "pdfFilename": "018487.pdf",
+    "disCode": "A"
+  },
+  {
+    "format": "PDF",
     "pin": "018489",
     "zip": "0",
     "number": "TM 9-3419-228-10",
