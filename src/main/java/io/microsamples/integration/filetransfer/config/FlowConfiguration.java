@@ -41,10 +41,6 @@ public class FlowConfiguration {
 
     private static final String TM_URL = "https://liw.logsa.army.mil/etmapp/api/general/search/{file}/0/pdf";
 
-//    @Autowired
-//    @Qualifier("errorChannel")
-//    private PublishSubscribeChannel errorChannel;
-
     @Bean
     @Primary
     public RestTemplate restTemplate(RestTemplateBuilder builder) throws NoSuchAlgorithmException, KeyManagementException {
